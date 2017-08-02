@@ -23,7 +23,14 @@
        max-height: 800px; 
        overflow: auto;       
      } 
+     
+     .modbtn{
+     	margin-left: 90%;
+     }
   	
+  	 .rereContainer{
+  	 	margin-left: 50px;
+  	 }
     </style>
     
 <div class='popup back' style="display:none;"></div>
@@ -97,6 +104,8 @@
 
 
 
+
+<!-- 이미지 썸네일 템플릿 -->
 <script id="templateAttach" type="text/x-handlebars-template">
 <li data-src='{{fullName}}'>
   <span class="mailbox-attachment-icon has-img"><img src="{{imgsrc}}" alt="Attachment"></span>
@@ -214,8 +223,8 @@
 
 
 
-
-	<div class="row">
+<!-- 댓글관련 -->
+	<div class="row replySection">
 		<div class="col-md-12">
 
 			<div class="box box-success">
@@ -269,13 +278,13 @@
 	
 	
 	
-	<!-- Modal -->
+	<!-- 댓글 수정 Modal -->
 <div id="modifyModal" class="modal modal-primary fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"></h4>
+        <h4 class="modal-title" id="modifyModalTitle"></h4>
       </div>
       <div class="modal-body" data-rno>
         <p><input type="text" id="replytext" class="form-control"></p>
@@ -288,35 +297,33 @@
     </div>
   </div>
 </div>  
-	
-	
-	
-	
-<!-- 	
-<script id="template" type="text/x-handlebars-template">
-{{#each .}}
-<li class="replyLi" data-rno={{rno}}>
-<i class="fa fa-comments bg-blue"></i>
- <div class="timeline-item" >
-  <span class="time">
-    <i class="fa fa-clock-o"></i>{{prettifyDate regdate}}
-  </span>
-  <h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
-  <div class="timeline-body">{{replytext}} </div>
-    <div class="timeline-footer">
-     <a class="btn btn-primary btn-xs" 
-	    data-toggle="modal" data-target="#modifyModal">Modify</a>
+
+
+<!-- 대댓글 Modal -->
+<div id="rereModal" class="modal modal-primary fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="rereRno"></h4>
+      </div>
+      <div class="modal-body" data-rno>
+        <p><input type="text" id="reretext" class="form-control"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info rereAddBtn">ADD REPLY</button>
+      </div>
     </div>
-  </div>			
-</li>
-{{/each}}
-</script>
-  -->
- 
+  </div>
+</div>  
+	
+
+
+<!-- 댓글 템플릿 -->
 <script id="template" type="text/x-handlebars-template">
 {{#each .}}
-<li class="replyLi" data-rno={{rno}}>
-<i class="fa fa-comments bg-blue"></i>
+<li class="replyLi {{#if parent}}rereContainer{{/if}}" data-rno={{rno}} data-parent={{parent}}>
+<i class="{{#if parent}}fa fa-share fa-flip-vertical{{else}}fa fa-comments bg-blue{{/if}}"></i>
 <div class="timeline-item" >
 <span class="time">
 <i class="fa fa-clock-o"></i>{{prettifyDate regdate}}
@@ -324,8 +331,12 @@
 <h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
 <div class="timeline-body">{{replytext}} </div>
 <div class="timeline-footer">
+	{{#unless parent}}
+	    <i class="glyphicon glyphicon glyphicon-pencil"></i>
+	    <a class="rere" data-rcnt={{rcnt}} data-rno={{rno}}> 답글 </a>
+    {{/unless}}
     {{#eqReplyer replyer }}
-        <a class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modifyModal">Modify</a>
+        <a class="btn btn-primary btn-xs modbtn" data-toggle="modal" data-target="#modifyModal">Modify</a>
     {{/eqReplyer}}
 </div>
 </div>			
@@ -334,7 +345,9 @@
 </script>  
 
 
+
 <script>
+	
 	Handlebars.registerHelper("eqReplyer", function(replyer, block) {
 		var accum = '';
 		if (replyer == '${login.uid}') {
@@ -365,6 +378,7 @@
 		target.after(html);
 
 	}
+	
 	var bno = ${boardVO.bno};
 	
 	var replyPage = 1;
@@ -377,6 +391,9 @@
 
 			$("#modifyModal").modal('hide');
 			$("#replycntSmall").html("[ " + data.pageMaker.totalCount +" ]");
+			$(".rere").each(function() {
+				
+			});
 		});
 	}
 
@@ -423,8 +440,7 @@
 	});
 	
 
-	$("#replyAddBtn").on("click",function(){
-		 
+	$("#replyAddBtn").on("click", function(){
 		 var replyerObj = $("#newReplyWriter");
 		 var replytextObj = $("#newReplyText");
 		 var replyer = replyerObj.val();
@@ -445,7 +461,7 @@
 						alert("등록 되었습니다.");
 						replyPage = 1;
 						getPage("/replies/"+bno+"/"+replyPage );
-						replyerObj.val("");
+						//replyerObj.val("");
 						replytextObj.val("");
 					}
 			}});
@@ -464,8 +480,7 @@
 	
 
 	$("#replyModBtn").on("click",function(){
-		  
-		  var rno = $(".modal-title").html();
+		  var rno = $("#modifyModalTitle").html();
 		  var replytext = $("#replytext").val();
 		  
 		  $.ajax({
@@ -505,10 +520,57 @@
 					}
 			}});
 	});
+	
+	
+	
+	
+	// 대댓글 JS
+	var childRcnt;
+	var parentRno;
+
+	$(".timeline").on("click", ".rere", function() {
+		
+		if(${empty login}){
+			alert("로그인이 필요합니다.");
+			return;
+		}
+		
+		childRcnt= $(this).data('rcnt');
+		parentRno= $(this).data('rno');
+		
+		$("#rereModal").modal();
+	});	
+
+	
+	
+	$(".rereAddBtn").on("click", function(){
+		 var replyer = $("#newReplyWriter").val();
+		 var replytext = $("#reretext").val();
+		 var parent = $("#rereRno").html();
+		 //var rcnt = childRcnt; // 부모 테그에 값 넣어놓고, 동적으로 가져와야 함!!!
+		  
+		 
+		 $.ajax({
+				type:'post',
+				url:'/replies/',
+				headers: { 
+				      "Content-Type": "application/json",
+				      "X-HTTP-Method-Override": "POST" },
+				dataType:'text',
+				data: JSON.stringify({bno:bno, replyer:replyer, replytext:replytext, parent:parent, rcnt:childRcnt, rno:parentRno}),
+				success:function(result){
+					console.log("result: " + result);
+					if(result == 'SUCCESS'){
+						alert("등록 되었습니다.");
+						replyPage = 1;
+						getPage("/replies/"+bno+"/"+replyPage );
+						$("#reretext").val("");
+						$("#rereModal").modal('hide');
+					}
+			}});
+	});
+	
 </script>
-
-
-
 
 
 

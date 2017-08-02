@@ -54,6 +54,8 @@
           </a>
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+              <li><a href="/user/login">Login</a></li>
+              
               <!-- Messages: style can be found in dropdown.less-->
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -248,6 +250,7 @@
                   <img src="/resources/dist/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
                   <span class="hidden-xs">Alexander Pierce</span>
                 </a>
+                
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">

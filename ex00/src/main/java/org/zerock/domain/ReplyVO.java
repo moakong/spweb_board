@@ -8,11 +8,42 @@ public class ReplyVO {
   private Integer bno;
   private String replytext;
   private String replyer;
-
+  
   private Date regdate;
   private Date updatedate;
 
-  public Integer getRno() {
+  private Integer parent;
+  private Integer rcnt;
+  private Integer seq;
+
+  
+  
+  
+  public Integer getParent() {
+	return parent;
+}
+
+public void setParent(Integer parent) {
+	this.parent = parent;
+}
+
+public Integer getRcnt() {
+	return rcnt;
+}
+
+public void setRcnt(Integer rcnt) {
+	this.rcnt = rcnt;
+}
+
+public Integer getSeq() {
+	return seq;
+}
+
+public void setSeq(Integer seq) {
+	this.seq = seq;
+}
+
+public Integer getRno() {
     return rno;
   }
 

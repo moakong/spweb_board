@@ -42,6 +42,12 @@ public class ReplyDAOImpl implements ReplyDAO {
 
     session.update(namespace + ".delete", rno);
   }
+
+  @Override
+  public void deleteRere(Integer rno) throws Exception {
+	  
+	  session.update(namespace + ".deleteRere", rno);
+  }
   
   
   @Override
@@ -67,5 +73,18 @@ public class ReplyDAOImpl implements ReplyDAO {
 
     return session.selectOne(namespace + ".getBno", rno);
   }
+
+	
+  
+  
+  
+  
+  @Override
+  public void updateRCnt(Integer rno) throws Exception {
+	  session.update(namespace + ".updateRCnt", rno);
+  }
+  
+  
+  
   
 }

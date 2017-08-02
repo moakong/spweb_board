@@ -27,6 +27,7 @@ public class ReplyServiceImpl implements ReplyService {
   public void addReply(ReplyVO vo) throws Exception {
 
     replyDAO.create(vo);
+    replyDAO.updateRCnt(vo.getRno());
     boardDAO.updateReplyCnt(vo.getBno(), 1);
   }
   
@@ -36,6 +37,7 @@ public class ReplyServiceImpl implements ReplyService {
   
     int bno = replyDAO.getBno(rno);
     replyDAO.delete(rno);
+    replyDAO.deleteRere(rno);
     boardDAO.updateReplyCnt(bno, -1);
   } 
   

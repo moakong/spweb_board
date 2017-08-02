@@ -4,20 +4,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.zerock.mapper.ReplyMapper">
-
+	
+	<update id="updateRCnt">
+	  update tbl_reply set rcnt = rcnt + 1 where rno = #{rno}
+	</update>
+	
+	
 	<select id="list" resultType="ReplyVO">
-		select
-		*
-		from
-		tbl_reply
-		where bno =
-		#{bno}
+		select *
+		from tbl_reply
+		where bno = #{bno}
 		order by rno desc
 	</select>
 
 	<insert id="create">
-		insert into tbl_reply (bno, replytext, replyer)
-		values (#{bno},#{replytext},#{replyer})
+		insert into tbl_reply (bno, replytext, replyer, parent, seq)
+		values (#{bno},#{replytext},#{replyer}, #{parent}, #{rcnt}+1)
 	</insert>
 
 	<update id="update">
@@ -32,11 +34,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 where rno = #{rno}
 	</delete>
 
-	<select id="listPage" resultType="ReplyVO">
+	<delete id="deleteRere">
+		delete from tbl_reply 
+		 where parent = #{rno}
+	</delete>
+
+<!-- 	<select id="listPage" resultType="ReplyVO">
 		select * 
 		  from tbl_reply 
 		 where bno = #{bno} 
 		 order by rno desc 
+		 limit #{cri.pageStart}, #{cri.perPageNum}
+	</select> -->
+
+	<select id="listPage" resultType="ReplyVO">
+		SELECT *
+		  FROM tbl_reply
+		 where bno = #{bno}
+		 ORDER BY IF(ISNULL(PARENT), RNO, PARENT), SEQ 
 		 limit #{cri.pageStart}, #{cri.perPageNum}
 	</select>
 
@@ -51,4 +66,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

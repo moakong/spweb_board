@@ -133,3 +133,39 @@ alter table tbl_user add column
 sessionlimit timestamp;
 
 
+
+
+
+
+-- for 대댓글
+ALTER TABLE `book_ex`.`tbl_reply` 
+ADD COLUMN `parent` INT(11) NULL AFTER `updatedate`,
+ADD COLUMN `rcnt` INT(11) NULL DEFAULT 0 AFTER `parent`,
+ADD COLUMN `seq` INT(11) NULL DEFAULT 0 AFTER `rcnt`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
